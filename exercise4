@@ -1,0 +1,29 @@
+import re
+
+
+def my_dict(operator, a):
+    return {
+            'byr': lambda: len(a) == 4 and 1920 <= int(a) <= 2002,
+            'iyr': lambda: len(a) == 4 and 2010 <= int(a) <= 2020,
+            'eyr': lambda: len(a) == 4 and 2020 <= int(a) <= 2030,
+            'hgt': lambda: bool(re.search('(15[0-9]|1[6-8][0-9]|19[0-3])cm', a)) or bool(re.search('(59|6[0-9]|7[0-6])in', a)),
+            'hcl': lambda: bool(re.search('#([0-9a-f]{6})', a)),
+            'ecl': lambda: a in ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth'],
+            'pid': lambda: True if all([i.isdigit() for i in a]) and len(a) == 9 else False,
+            }.get(operator, lambda: 0)()
+
+
+def get_input():
+    with open('input', 'r') as file:
+        data = file.read().split('\n\n')
+    return data
+
+
+def get_result(arg):
+    d2 = [dict(i.split(":") for i in x.split()) for x in arg]
+    res = [{x:  my_dict(x, i.get(x)) for x in i} for i in d2]
+    return len([sum(i.values()) for i in res if sum(i.values()) >= 7])
+
+
+if __name__ == '__main__':
+    print(get_result(get_input()))
